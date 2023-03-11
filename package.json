@@ -1,5 +1,12 @@
 {
-  "name": "react-arborist-monorepo",
+  "name": "react-arborist",
+  "version": "3.0.2",
+  "license": "MIT",
+  "source": "packages/react-arborist/src/index.ts",
+  "main": "packages/react-arborist/dist/index.js",
+  "module": "packages/react-arborist/dist/module.js",
+  "types": "packages/react-arborist/dist/index.d.ts",
+  "sideEffects": false,
   "workspaces": [
     "./packages/*"
   ],
