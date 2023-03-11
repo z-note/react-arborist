@@ -23,7 +23,8 @@ yarn-debug.log*
 yarn-error.log*
 
 # react-arborist
-*dist*
+*/dist
+!react-arborist/dist
 
 .pnp.*
 .yarn/*
