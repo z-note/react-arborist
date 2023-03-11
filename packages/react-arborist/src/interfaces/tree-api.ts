@@ -323,15 +323,18 @@ export class TreeApi<T> {
     this.focus(this.at(index));
   }
 
-  select(node: Identity, opts: { align?: Align } = {}) {
+  select(node: Identity, opts: { align?: Align; focus?: boolean } = {}) {
     if (!node) return;
+    const changeFocus = opts.focus !== false;
     const id = identify(node);
-    this.dispatch(focus(id));
+    if (changeFocus) this.dispatch(focus(id));
     this.dispatch(selection.only(id));
     this.dispatch(selection.anchor(id));
     this.dispatch(selection.mostRecent(id));
     this.scrollTo(id, opts.align);
-    if (this.focusedNode) safeRun(this.props.onFocus, this.focusedNode);
+    if (this.focusedNode && changeFocus) {
+      safeRun(this.props.onFocus, this.focusedNode);
+    }
     safeRun(this.props.onSelect, this.selectedNodes);
   }
 
@@ -408,7 +411,7 @@ export class TreeApi<T> {
     if (this.isFiltered) return false;
     const parentNode = this.get(this.state.dnd.parentId) ?? this.root;
     const dragNodes = this.dragNodes;
-    const check = this.props.disableDrop;
+    const isDisabled = this.props.disableDrop;
 
     for (const drag of dragNodes) {
       if (!drag) return false;
@@ -417,17 +420,17 @@ export class TreeApi<T> {
     }
 
     // Allow the user to insert their own logic
-    if (typeof check == "function") {
-      return check({
+    if (typeof isDisabled == "function") {
+      return !isDisabled({
         parentNode,
         dragNodes: this.dragNodes,
         index: this.state.dnd.index,
       });
-    } else if (typeof check == "string") {
+    } else if (typeof isDisabled == "string") {
       // @ts-ignore
-      return !!parentNode.data[check];
-    } else if (typeof check === "boolean") {
-      return check;
+      return !parentNode.data[isDisabled];
+    } else if (typeof isDisabled === "boolean") {
+      return !isDisabled;
     } else {
       return true;
     }
